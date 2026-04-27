@@ -45,6 +45,15 @@ body{font-family:var(--font-sans);background:transparent}
 #send-btn.active{background:#0057B7;color:#fff;border-color:#0057B7}
 #footer-hint{font-size:10px;color:var(--color-text-tertiary);text-align:center;padding:2px 0 0;flex-shrink:0}
 #share-toast{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--color-text-primary);display:none;white-space:nowrap;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+#key-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:flex;align-items:center;justify-content:center}
+#key-box{background:var(--color-background-primary,#fff);border-radius:14px;padding:24px 20px;width:300px;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
+#key-box h3{font-size:14px;font-weight:600;color:var(--color-text-primary,#111);margin-bottom:6px}
+#key-box p{font-size:12px;color:var(--color-text-secondary,#666);margin-bottom:14px;line-height:1.5}
+#key-input{width:100%;padding:8px 11px;border:0.5px solid var(--color-border-secondary,#ccc);border-radius:8px;font-size:13px;font-family:inherit;outline:none;margin-bottom:10px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#111)}
+#key-input:focus{border-color:#0057B7}
+#key-save{width:100%;padding:9px;background:#0057B7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
+#key-save:hover{background:#0046a0}
+#key-link{font-size:11px;color:#0057B7;text-decoration:none;display:block;text-align:center;margin-top:8px}
 </style>
 
 <h2 class="sr-only" style="position:absolute;left:-9999px">Translator bot Ukrainian to Spanish and back</h2>
@@ -65,6 +74,7 @@ body{font-family:var(--font-sans);background:transparent}
         <div id="menu-dropdown">
           <button class="menu-item" id="clear-btn">🔄 Очистити чат</button>
           <button class="menu-item" id="copy-link-btn">📋 Копіювати посилання</button>
+          <button class="menu-item" id="change-key-btn">🔑 Змінити API ключ</button>
           <button class="menu-item" id="about-btn">ℹ️ Про бота</button>
         </div>
       </div>
@@ -85,6 +95,15 @@ body{font-family:var(--font-sans);background:transparent}
     <button id="send-btn">↑</button>
   </div>
   <div id="share-toast">✓ Посилання скопійовано!</div>
+  <div id="key-overlay">
+    <div id="key-box">
+      <h3>🔑 Введи Anthropic API ключ</h3>
+      <p>Ключ зберігається лише у твоєму браузері (localStorage) і нікуди не передається.</p>
+      <input id="key-input" type="password" placeholder="sk-ant-..." autocomplete="off"/>
+      <button id="key-save">Зберегти та продовжити</button>
+      <a id="key-link" href="https://console.anthropic.com/settings/keys" target="_blank">Отримати ключ на console.anthropic.com →</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -113,7 +132,23 @@ const input = document.getElementById('input');
 const sendBtn = document.getElementById('send-btn');
 const welcome = document.getElementById('welcome');
 const toast = document.getElementById('share-toast');
+const keyOverlay = document.getElementById('key-overlay');
+const keyInput = document.getElementById('key-input');
 let loading = false;
+
+function getKey() { return localStorage.getItem('anthropic_key') || ''; }
+function initKeyOverlay() {
+  if (getKey()) { keyOverlay.style.display = 'none'; return; }
+  keyOverlay.style.display = 'flex';
+}
+document.getElementById('key-save').onclick = () => {
+  const k = keyInput.value.trim();
+  if (!k.startsWith('sk-')) return;
+  localStorage.setItem('anthropic_key', k);
+  keyOverlay.style.display = 'none';
+};
+keyInput.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('key-save').click(); });
+initKeyOverlay();
 
 // Examples
 const examplesDiv = document.getElementById('examples');
@@ -177,9 +212,14 @@ async function send(text) {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system: SYSTEM,
         messages: [{role:'user', content: text}]
@@ -217,6 +257,12 @@ const menuBtn = document.getElementById('menu-btn');
 const menuDrop = document.getElementById('menu-dropdown');
 menuBtn.onclick = (e) => { e.stopPropagation(); menuDrop.classList.toggle('open'); };
 document.addEventListener('click', () => menuDrop.classList.remove('open'));
+
+document.getElementById('change-key-btn').onclick = () => {
+  keyInput.value = '';
+  keyOverlay.style.display = 'flex';
+  menuDrop.classList.remove('open');
+};
 
 document.getElementById('clear-btn').onclick = () => {
   chat.innerHTML = '';
