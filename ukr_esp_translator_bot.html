@@ -87,7 +87,7 @@ body{font-family:var(--font-sans);background:transparent}
 </div>
 
 <script>
-const GEMINI_URL = 'https://ukr-esp-translator.vitaliy-androsyuk.workers.dev';
+const WORKER_URL = 'https://ukr-esp-translator.vitaliy-androsyuk.workers.dev';
 
 const EXAMPLES = [
   {text:"Що по чому?", hint:"сленг"},
@@ -176,29 +176,20 @@ async function send(text) {
   addUserMsg(text);
   const typingRow = addTyping();
   try {
-    const res = await fetch(GEMINI_URL, {
+    const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        system_instruction: {parts: [{text: SYSTEM}]},
-        contents: [{role: 'user', parts: [{text}]}],
-        generationConfig: {
-          maxOutputTokens: 500,
-          responseMimeType: 'application/json'
-        }
-      })
+      body: JSON.stringify({text, system: SYSTEM})
     });
     const d = await res.json();
-    // API error (e.g. 403 domain restriction, quota exceeded)
     if (d.error) {
       replaceTyping(typingRow, {translation: `Помилка API: ${d.error.message}`, detected_lang: '?', note: ''});
       return;
     }
-    const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    const raw = d.choices?.[0]?.message?.content || '{}';
     let parsed;
     try { parsed = JSON.parse(raw.replace(/```json|```/g, '').trim()); }
     catch { parsed = {translation: raw, detected_lang: '?', note: ''}; }
-    // fallback if translation field missing
     if (!parsed.translation) parsed = {translation: raw || 'Порожня відповідь', detected_lang: '?', note: ''};
     replaceTyping(typingRow, parsed);
   } catch(e) {
