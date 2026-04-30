@@ -1,53 +1,62 @@
-
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Перекладач">
+<title>Перекладач УКР ↔ ESP</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);background:transparent}
-#app{display:flex;flex-direction:column;height:580px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
-#header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#f2f2f7}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:600px;margin:0 auto;background:#fff;position:relative}
+#header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));border-bottom:0.5px solid #e0e0e0;background:#f8f8f8;flex-shrink:0}
 #header-left{display:flex;align-items:center;gap:10px}
-#logo{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0057B7,#FFD700);display:flex;align-items:center;justify-content:center;font-size:14px}
-#header-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-#header-sub{font-size:11px;color:var(--color-text-secondary)}
+#logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0057B7,#FFD700);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+#header-title{font-size:14px;font-weight:600;color:#000}
+#header-sub{font-size:11px;color:#888}
 #header-right{display:flex;align-items:center;gap:6px}
-.hbtn{font-size:12px;padding:5px 10px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer}
-.hbtn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.hbtn{font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer;min-height:36px}
+.hbtn:active{background:#eee}
 #menu-wrap{position:relative}
-#menu-dropdown{position:absolute;top:34px;right:0;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);z-index:50;min-width:170px;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+#menu-dropdown{position:absolute;top:42px;right:0;background:#fff;border:1px solid #e0e0e0;border-radius:12px;z-index:50;min-width:190px;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.12)}
 #menu-dropdown.open{display:block}
-.menu-item{display:block;width:100%;padding:9px 14px;font-size:13px;color:var(--color-text-primary);background:transparent;border:none;cursor:pointer;text-align:left}
-.menu-item:hover{background:var(--color-background-secondary)}
-#chat{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-#chat::-webkit-scrollbar{width:3px}
-#chat::-webkit-scrollbar-thumb{background:var(--color-border-secondary);border-radius:2px}
+.menu-item{display:block;width:100%;padding:12px 16px;font-size:14px;color:#000;background:transparent;border:none;cursor:pointer;text-align:left;min-height:44px}
+.menu-item:active{background:#f2f2f7}
+#chat{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .welcome{text-align:center;padding:24px 0 12px}
-.welcome-emoji{font-size:28px;margin-bottom:8px}
-.welcome-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
-.welcome-sub{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:14px}
+.welcome-emoji{font-size:32px;margin-bottom:8px}
+.welcome-title{font-size:15px;font-weight:600;color:#000;margin-bottom:4px}
+.welcome-sub{font-size:13px;color:#888;line-height:1.5;margin-bottom:16px}
 .examples{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.example-btn{padding:5px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);font-size:11px;cursor:pointer;font-family:var(--font-sans)}
-.example-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.example-btn{padding:7px 12px;border-radius:20px;border:1px solid #ddd;background:#f8f8f8;color:#555;font-size:12px;cursor:pointer;font-family:inherit;min-height:36px}
+.example-btn:active{background:#e8e8e8}
 .msg-row{display:flex}
 .msg-row.user{justify-content:flex-end}
 .msg-row.bot{justify-content:flex-start}
-.bubble-user{max-width:75%;padding:9px 13px;border-radius:16px 16px 4px 16px;background:#0057B7;color:#fff;font-size:13px;line-height:1.5}
-.bubble-bot{max-width:82%;border:0.5px solid var(--color-border-tertiary);border-radius:16px 16px 16px 4px;overflow:hidden;background:var(--color-background-primary)}
-.bubble-top{padding:6px 12px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary)}
-.bubble-text{padding:10px 13px;font-size:13px;line-height:1.55;color:var(--color-text-primary)}
-.bubble-note{padding:5px 12px 9px;font-size:11px;color:var(--color-text-secondary);font-style:italic;border-top:0.5px solid var(--color-border-tertiary)}
-.typing{display:flex;align-items:center;gap:4px;padding:10px 13px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--color-border-secondary);animation:blink 1.2s infinite}
+.bubble-user{max-width:78%;padding:10px 14px;border-radius:18px 18px 4px 18px;background:#0057B7;color:#fff;font-size:15px;line-height:1.5;word-break:break-word}
+.bubble-bot{max-width:88%;border:1px solid #e8e8e8;border-radius:4px 18px 18px 18px;overflow:hidden;background:#fff}
+.bubble-top{padding:7px 12px;background:#f8f8f8;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:6px;font-size:12px;color:#888}
+.bubble-top-left{display:flex;align-items:center;gap:6px;flex:1}
+.copy-btn{background:none;border:none;cursor:pointer;font-size:15px;padding:2px 4px;color:#888;flex-shrink:0;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.copy-btn:active{background:#e8e8e8}
+.bubble-text{padding:10px 14px;font-size:15px;line-height:1.55;color:#000;word-break:break-word}
+.bubble-note{padding:6px 14px 10px;font-size:12px;color:#888;font-style:italic;border-top:1px solid #e8e8e8}
+.typing{display:flex;align-items:center;gap:4px;padding:12px 14px}
+.dot{width:7px;height:7px;border-radius:50%;background:#ccc;animation:blink 1.2s infinite}
 .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
-#footer{border-top:0.5px solid var(--color-border-tertiary);padding:10px 12px;display:flex;align-items:flex-end;gap:8px;flex-shrink:0;background:var(--color-background-secondary)}
-#input{flex:1;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:10px;font-size:13px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary);resize:none;outline:none;line-height:1.4;max-height:90px}
-#input:focus{border-color:var(--color-border-primary)}
-#send-btn{width:34px;height:34px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-#send-btn.active{background:#0057B7;color:#fff;border-color:#0057B7}
-#share-toast{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--color-text-primary);display:none;white-space:nowrap;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+#footer{border-top:1px solid #e0e0e0;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:8px;flex-shrink:0;background:#f8f8f8}
+#input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:22px;font-size:16px;font-family:inherit;color:#000;background:#fff;resize:none;outline:none;line-height:1.4;max-height:120px;-webkit-appearance:none}
+#input:focus{border-color:#0057B7}
+#send-btn{width:40px;height:40px;border-radius:50%;border:none;background:#ccc;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+#send-btn.active{background:#0057B7}
+#toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);border-radius:20px;padding:8px 18px;font-size:13px;color:#fff;display:none;white-space:nowrap;z-index:100}
 </style>
-
-<h2 class="sr-only" style="position:absolute;left:-9999px">Translator bot Ukrainian to Spanish and back</h2>
-
+</head>
+<body>
 <div id="app">
   <div id="header">
     <div id="header-left">
@@ -83,7 +92,7 @@ body{font-family:var(--font-sans);background:transparent}
     <textarea id="input" placeholder="Напиши по-українськи або en español..." rows="1"></textarea>
     <button id="send-btn">↑</button>
   </div>
-  <div id="share-toast">✓ Посилання скопійовано!</div>
+  <div id="toast"></div>
 </div>
 
 <script>
@@ -113,10 +122,10 @@ const chat = document.getElementById('chat');
 const input = document.getElementById('input');
 const sendBtn = document.getElementById('send-btn');
 const welcome = document.getElementById('welcome');
-const toast = document.getElementById('share-toast');
+const toast = document.getElementById('toast');
 let loading = false;
+let toastTimer;
 
-// Examples
 const examplesDiv = document.getElementById('examples');
 EXAMPLES.forEach(ex => {
   const btn = document.createElement('button');
@@ -126,12 +135,19 @@ EXAMPLES.forEach(ex => {
   examplesDiv.appendChild(btn);
 });
 
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.style.display = 'none', 2000);
+}
+
 function flagFrom(lang) { return lang === 'uk' ? '🇺🇦' : lang === 'es' ? '🇪🇸' : '🌐'; }
 function flagTo(lang)   { return lang === 'uk' ? '🇪🇸' : lang === 'es' ? '🇺🇦' : '🌐'; }
 function langLabel(lang){ return lang === 'uk' ? 'укр → іспанська' : lang === 'es' ? 'іспанська → укр' : ''; }
 
 function addUserMsg(text) {
-  if (welcome) welcome.style.display = 'none';
+  welcome.style.display = 'none';
   const row = document.createElement('div');
   row.className = 'msg-row user';
   const bbl = document.createElement('div');
@@ -158,9 +174,42 @@ function addTyping() {
 function replaceTyping(typingRow, data) {
   const bbl = document.createElement('div');
   bbl.className = 'bubble-bot';
-  bbl.innerHTML = `<div class="bubble-top">${flagFrom(data.detected_lang)} → ${flagTo(data.detected_lang)} <span style="opacity:.6">${langLabel(data.detected_lang)}</span></div>
-    <div class="bubble-text">${data.translation}</div>
-    ${data.note ? `<div class="bubble-note">💡 ${data.note}</div>` : ''}`;
+
+  const top = document.createElement('div');
+  top.className = 'bubble-top';
+
+  const left = document.createElement('div');
+  left.className = 'bubble-top-left';
+  left.innerHTML = `${flagFrom(data.detected_lang)} → ${flagTo(data.detected_lang)} <span style="opacity:.6">${langLabel(data.detected_lang)}</span>`;
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'copy-btn';
+  copyBtn.title = 'Копіювати';
+  copyBtn.textContent = '⎘';
+  copyBtn.onclick = async () => {
+    await navigator.clipboard.writeText(data.translation).catch(() => {});
+    copyBtn.textContent = '✓';
+    setTimeout(() => copyBtn.textContent = '⎘', 2000);
+    showToast('Скопійовано!');
+  };
+
+  top.appendChild(left);
+  top.appendChild(copyBtn);
+
+  const txt = document.createElement('div');
+  txt.className = 'bubble-text';
+  txt.textContent = data.translation;
+
+  bbl.appendChild(top);
+  bbl.appendChild(txt);
+
+  if (data.note) {
+    const note = document.createElement('div');
+    note.className = 'bubble-note';
+    note.textContent = '💡 ' + data.note;
+    bbl.appendChild(note);
+  }
+
   typingRow.innerHTML = '';
   typingRow.className = 'msg-row bot';
   typingRow.appendChild(bbl);
@@ -183,7 +232,7 @@ async function send(text) {
     });
     const d = await res.json();
     if (d.error) {
-      replaceTyping(typingRow, {translation: `Помилка API: ${d.error.message}`, detected_lang: '?', note: ''});
+      replaceTyping(typingRow, {translation: `Помилка: ${d.error.message}`, detected_lang: '?', note: ''});
       return;
     }
     const raw = d.choices?.[0]?.message?.content || '{}';
@@ -205,7 +254,7 @@ function updateBtn() {
 
 input.addEventListener('input', () => {
   input.style.height = 'auto';
-  input.style.height = Math.min(input.scrollHeight, 90) + 'px';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
   updateBtn();
 });
 input.addEventListener('keydown', e => {
@@ -213,7 +262,6 @@ input.addEventListener('keydown', e => {
 });
 sendBtn.onclick = () => send(input.value);
 
-// Menu
 const menuBtn = document.getElementById('menu-btn');
 const menuDrop = document.getElementById('menu-dropdown');
 menuBtn.onclick = (e) => { e.stopPropagation(); menuDrop.classList.toggle('open'); };
@@ -226,37 +274,33 @@ document.getElementById('clear-btn').onclick = () => {
   menuDrop.classList.remove('open');
 };
 
-function showToast() {
-  toast.style.display = 'block';
-  setTimeout(() => toast.style.display = 'none', 2000);
-}
-
 document.getElementById('copy-link-btn').onclick = async () => {
   await navigator.clipboard.writeText(window.location.href).catch(() => {});
-  showToast();
+  showToast('Посилання скопійовано!');
   menuDrop.classList.remove('open');
 };
 
 document.getElementById('share-btn').onclick = async () => {
-  const url = window.location.href;
   if (navigator.share) {
-    await navigator.share({title: 'Перекладач УКР↔ESP', url}).catch(() => {});
+    await navigator.share({title: 'Перекладач УКР↔ESP', url: window.location.href}).catch(() => {});
   } else {
-    await navigator.clipboard.writeText(url).catch(() => {});
-    showToast();
+    await navigator.clipboard.writeText(window.location.href).catch(() => {});
+    showToast('Посилання скопійовано!');
   }
 };
 
 document.getElementById('about-btn').onclick = () => {
-  if (welcome) welcome.style.display = 'none';
+  welcome.style.display = 'none';
   const row = document.createElement('div');
   row.className = 'msg-row bot';
   const bbl = document.createElement('div');
   bbl.className = 'bubble-bot';
-  bbl.innerHTML = '<div class="bubble-top">🤖 інфо</div><div class="bubble-text">Я — контекстний перекладач між українською та іспанською. Розумію сленг, ідіоми та приказки. Ігнорую помилки і перекладаю по суті, а не дослівно. Безкоштовно та без реєстрації.</div>';
+  bbl.innerHTML = '<div class="bubble-top"><div class="bubble-top-left">🤖 інфо</div></div><div class="bubble-text">Я — контекстний перекладач між українською та іспанською. Розумію сленг, ідіоми та приказки. Ігнорую помилки і перекладаю по суті, а не дослівно. Безкоштовно та без реєстрації.</div>';
   row.appendChild(bbl);
   chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
   menuDrop.classList.remove('open');
 };
 </script>
+</body>
+</html>
